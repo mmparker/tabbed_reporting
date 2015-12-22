@@ -1,0 +1,129 @@
+
+
+
+
+
+
+```{r setup, echo= FALSE, message=FALSE,warning= FALSE}
+
+# Strings ain't factors
+options(stringsAsFactors = FALSE)
+
+# Load the required libraries
+library(knitr)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+
+
+# Set the default ggplot theme
+theme_set(theme_bw())
+
+
+# Set default chunk options
+opts_chunk$set(echo = FALSE,
+               results = 'asis',
+               message = FALSE,
+               warning = FALSE,
+               error = TRUE)
+
+
+# Read in the table
+tbstats_raw <- read.delim("cdc_otis_extract.txt")
+
+tbstats <- tbstats_raw %>% 
+    filter(Notes == "") %>% 
+    mutate(per.complete = as.numeric(gsub(x = Percent.of.Completion.of.Therapy.Within.One.Year.Among.Those.Eligible,
+                               pattern = "%|Not Applicable",
+                               replacement = ""))) %>% 
+    select(-matches("Notes"), -ends_with(".Code"))
+
+
+```
+
+
+
+
+
+
+# Reported Active Tuberculosis Cases in the United States: 1993-2013
+
+
+## Reported Active TB Cases in the United States, 1993-2013
+
+```{r nation}
+
+tbstats %>% 
+    group_by(Year) %>% 
+    summarise(n_cases = sum(Count)) %>% 
+    ggplot(aes(x = Year, y = n_cases)) +
+        geom_line(size = 2) +
+        labs(x = "Year Reported",
+             y = "Number of Cases",
+             title = "Reported Active TB Cases in the United States") +
+        expand_limits(y = 0)
+
+
+```
+
+
+
+## Reported Active TB Cases by State
+  
+```{r cases}
+
+top_five <-
+    tbstats %>% 
+    filter(Year == 1993) %>% 
+    arrange(desc(Count)) %>% 
+    slice(1:5) %>% 
+    select(State)
+
+
+tbstats$top_five_state <- factor(tbstats$State, levels = c(top_five$State, "Other"))
+tbstats$top_five_state[is.na(tbstats$top_five_state)] <- "Other"
+
+tbstats %>% 
+    group_by(Year, State) %>%
+    summarise(n_cases = sum(Count), 
+              top_five_state = unique(top_five_state)) %>% 
+    ggplot(aes(x = Year, y = n_cases, group = State)) +
+        geom_line(aes(color = top_five_state, size = top_five_state)) +
+        scale_size_manual(values = c(rep(2, 5), 0.5)) + 
+        scale_color_manual(values = c(brewer.pal(n = 5, "Paired"), "grey")) +
+        labs(x = "Year Reported",
+             y = "Number of Cases",
+             color = "State",
+             title = "Reported Active TB Cases in the United States") +
+        expand_limits(y = 0)
+
+
+```
+
+  
+  
+## Treatment Completion Within One Year for Eligible US TB Cases
+
+
+
+```{r tx_completion}
+
+tbstats %>% 
+    group_by(Year) %>% 
+    summarise(tx_completion = weighted.mean(per.complete, w = Count)) %>% 
+    ggplot(aes(x = Year, y = tx_completion)) +
+        geom_line(size = 2) +
+        expand_limits(y = 0) +
+        labs(x = "Year Reported",
+             y = "Percent of Cases Completed",
+             title = "Completion of Treatment within One Year for Eligible Cases")
+
+
+```
+
+
+
+Data downloaded from the [CDC WONDER query tool](http://wonder.cdc.gov/tb.html).
+
+
+
