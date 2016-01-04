@@ -5,6 +5,15 @@ Matt Parker
 2015-12-22
 
 
+Quick Links to Source Files and Rendered Outputs:
+
+ - Simple Report: [source](https://raw.githubusercontent.com/mmparker/tabbed_reporting/master/report.rmd), 
+[rendered](http://blog.revolutionanalytics.com/downloads/report.html)    
+
+ - Tabbed Report: [source](https://raw.githubusercontent.com/mmparker/tabbed_reporting/master/report_with_jquery.rmd), 
+[rendered](http://blog.revolutionanalytics.com/downloads/report_with_jquery.html)    
+
+
 One of the great advantages of R's openness is its extensibility. R's abundant
 packages are the most conspicuous example of that extensibility, and 
 Revolution R Enterprise is a powerful example of how far it can stretch. 
@@ -33,12 +42,12 @@ splitting complex reports up by topic, or for providing different types of
 users with customized views of the results.
 
 To get a sense of what this conversion might look like, here's 
-[a simple R-Markdown report without tabs](link) 
+[a simple R-Markdown report without tabs](http://blog.revolutionanalytics.com/downloads/report.html) 
 ([Rmd source](https://github.com/mmparker/tabbed_reporting/blob/master/report.rmd)):
 
 ![report_screenshot.png]
 
-... and the [same report with tabs](link) 
+... and the [same report with tabs](http://blog.revolutionanalytics.com/downloads/report_with_jquery.html) 
 ([source](https://github.com/mmparker/tabbed_reporting/blob/master/report_with_jquery.rmd)):
 
 ![tabbed_report_screenshot.png]
